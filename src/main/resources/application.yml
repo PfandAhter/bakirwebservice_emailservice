@@ -1,0 +1,41 @@
+
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/user_service
+    username: springstudent
+    password: springstudent
+  jpa:
+    properties:
+      javax:
+        persistence:
+          validation:
+            mode: none
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  main:
+    banner-mode: off
+  application:
+    name: user-service
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: # your email...
+    password: # your gmail secret code...
+    properties:
+      mail:
+        smpt:
+          auth: true
+          starttls:
+            enable: true
+server:
+  port: 8085
+
+
+client:
+  feign:
+    microServiceRegister-service:
+      path: http://localhost:8090/registerservice
+      ready: /ready
+      stopped: /stopped
