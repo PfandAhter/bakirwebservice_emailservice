@@ -24,10 +24,12 @@ public class ApplicationConfiguration {
     @Value("${spring.mail.password}")
     private String senderPassword;
 
+    private String smtpGmail = "smtp.gmail.com";
+
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
+        mailSender.setHost(smtpGmail);
         mailSender.setPort(587);
 
         mailSender.setUsername(senderUsername);
