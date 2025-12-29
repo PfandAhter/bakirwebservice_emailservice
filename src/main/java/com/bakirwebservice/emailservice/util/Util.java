@@ -1,4 +1,4 @@
-package com.bakirwebservice.emailservice.rest.util;
+package com.bakirwebservice.emailservice.util;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

@@ -1,13 +1,13 @@
-package com.bakirwebservice.emailservice.rest.config;
+package com.bakirwebservice.emailservice.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
 
 import java.util.Properties;
 
@@ -18,7 +18,11 @@ import java.util.Properties;
 
 public class ApplicationConfiguration {
 
+    @Value("${spring.mail.username}")
+    private String senderUsername;
 
+    @Value("${spring.mail.password}")
+    private String senderPassword;
 
     @Bean
     public JavaMailSender getJavaMailSender() {
@@ -26,8 +30,8 @@ public class ApplicationConfiguration {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
 
-        mailSender.setUsername("***REMOVED***");
-        mailSender.setPassword("***REMOVED***");
+        mailSender.setUsername(senderUsername);
+        mailSender.setPassword(senderPassword);
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

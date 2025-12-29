@@ -1,4 +1,4 @@
-package com.bakirwebservice.emailservice.model.entity;
+package com.bakirwebservice.emailservice.entity;
 
 
 import jakarta.persistence.*;

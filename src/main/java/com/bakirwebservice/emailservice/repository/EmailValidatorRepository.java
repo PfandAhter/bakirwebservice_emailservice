@@ -1,6 +1,6 @@
-package com.bakirwebservice.emailservice.rest.repository;
+package com.bakirwebservice.emailservice.repository;
 
-import com.bakirwebservice.emailservice.model.entity.EmailValidator;
+import com.bakirwebservice.emailservice.entity.EmailValidator;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
