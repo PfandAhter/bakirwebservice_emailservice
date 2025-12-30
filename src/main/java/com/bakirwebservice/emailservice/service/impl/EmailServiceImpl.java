@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -28,6 +29,8 @@ public class EmailServiceImpl implements EmailService {
     private final EmailValidatorRepository validatorRepository;
 
     private static final String LOGO_PATH = System.getProperty("user.dir") + File.separator + "logo" + File.separator + "bakirbank-transparent.png";
+
+    ClassPathResource logoFile = new ClassPathResource("/logo/bakirbank-transparent.png");
 
     @Value("${spring.mail.username}")
     private String sender;
@@ -224,9 +227,6 @@ public class EmailServiceImpl implements EmailService {
         String formattedDate = formatExpiryDate(request.getExpiryDate()); // 12/29 formatı
         String cardImageFilename = getCardImageFilename(request.getCardNetwork(), request.getCardType());
 
-        // Resmin yolu
-        String cardImagePath = System.getProperty("user.dir") + File.separator + "logo" + File.separator + cardImageFilename;
-
         String htmlContent = """
     <html>
     <head>
@@ -334,10 +334,10 @@ public class EmailServiceImpl implements EmailService {
         );
 
         String subject = "BAKIRBANK - Kartınız Onaylandı! 🎉";
-        sendHtmlEmailWithCardImage(request.getUserEmail(), htmlContent, subject, cardImagePath);
+        sendHtmlEmailWithCardImage(request.getUserEmail(), htmlContent, subject, cardImageFilename);
     }
 
-    private void sendHtmlEmailWithCardImage(String email, String htmlContent, String subject, String cardImagePath) {
+    private void sendHtmlEmailWithCardImage(String email, String htmlContent, String subject, String cardImageFilename) {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
@@ -348,14 +348,15 @@ public class EmailServiceImpl implements EmailService {
             helper.setSubject(subject);
             helper.setText(htmlContent, true);
 
-            FileSystemResource logo = new FileSystemResource(new File(LOGO_PATH));
-            helper.addInline("bakirbank-logo", logo);
+            //FileSystemResource logo = new FileSystemResource(new File(LOGO_PATH));
+            helper.addInline("bakirbank-logo", logoFile);
 
-            FileSystemResource cardBg = new FileSystemResource(new File(cardImagePath));
+            ClassPathResource cardBg = new ClassPathResource("logo/" + cardImageFilename);
             if (cardBg.exists()) {
                 helper.addInline("card-bg", cardBg);
             } else {
-                log.warn("Kart görseli bulunamadı: " + cardImagePath);
+                log.warn("Kart görseli JAR içinde bulunamadı: logo/" + cardImageFilename);
+                helper.addInline("card-bg", new ClassPathResource("logo/default.png"));
             }
 
             javaMailSender.send(mimeMessage);
@@ -577,9 +578,7 @@ public class EmailServiceImpl implements EmailService {
             helper.setSubject(subject);
             helper.setText(htmlContent, true);
 
-            // Inline logo ekle
-            FileSystemResource logo = new FileSystemResource(new File(LOGO_PATH));
-            helper.addInline("bakirbank-logo", logo);
+            helper.addInline("bakirbank-logo", logoFile);
 
             javaMailSender.send(mimeMessage);
             log.info("Modern HTML mail sent to: " + email);
