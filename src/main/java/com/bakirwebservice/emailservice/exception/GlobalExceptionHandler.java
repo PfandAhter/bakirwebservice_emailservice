@@ -40,6 +40,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(createErrorResponseBody(e, request, errorCodes));
     }
 
+    @ExceptionHandler({RemoteDirectException.class})
+    public ResponseEntity<BaseResponse> handleBusinessException(RemoteDirectException e, HttpServletRequest request) {
+        logError(e, request);
+
+        return ResponseEntity.status(e.getHttpStatus()).body(createRemoteDirectErrorResponseBody(e.getOriginalErrorCode(), e.getOriginalMessage()));
+    }
+
     @ExceptionHandler({RuntimeException.class, Exception.class})
     public ResponseEntity<BaseResponse> handleTechnicalException(Exception exception, HttpServletRequest request) {
         logError(exception, request);
@@ -53,6 +60,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private BaseResponse createErrorResponseBody(Exception exception, HttpServletRequest request, ErrorCodes errorCodes) {
         logErrorToParameterService(exception, request, errorCodes);
         return new BaseResponse("FAILED", errorCodes.getError(), errorCodes.getDescription());
+    }
+
+    private BaseResponse createRemoteDirectErrorResponseBody(String error, String description) {
+        return new BaseResponse("FAILED", error, description);
     }
 
     private ErrorCodes getErrorCodeSafe(String code) {
