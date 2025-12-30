@@ -34,6 +34,20 @@ spring:
 server:
   port: 8087
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus, circuitbreakers, circuitbreakerevents
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      enabled: true
+    tags:
+      application: ${spring.application.name}
+
 feign:
   client:
     parameter-service:
